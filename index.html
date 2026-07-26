@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Source Evaluation Checklist</title>
+<style>
+  :root{
+    --bg:#f7f6f3; --card:#fff; --ink:#1f1d1a; --muted:#6b6660;
+    --line:#e2ded7; --accent:#8a5a2b; --good:#2f7a4f; --warn:#b8860b; --bad:#a8342a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Georgia,serif;}
+  .wrap{max-width:880px;margin:0 auto;padding:32px 20px 80px}
+  h1{font-size:28px;margin:0 0 6px}
+  .sub{color:var(--muted);margin:0 0 24px;font-size:15px}
+  .bar{position:sticky;top:0;z-index:20;background:var(--bg);
+    border-bottom:1px solid var(--line);padding:12px 0;margin-bottom:20px;
+    display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .score{font-weight:700;font-size:15px}
+  .verdict{font-size:14px;padding:3px 10px;border-radius:99px;border:1px solid var(--line);background:var(--card)}
+  .track{flex:1;min-width:140px;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .fill{height:100%;width:0;background:var(--accent);transition:width .25s}
+  button{font:inherit;font-size:14px;padding:6px 12px;border:1px solid var(--line);
+    background:var(--card);border-radius:7px;cursor:pointer;color:var(--ink)}
+  button:hover{border-color:var(--accent)}
+  .meta{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:22px}
+  .meta label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--muted);margin-bottom:4px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  input[type=text],textarea{width:100%;font:inherit;font-size:14px;padding:7px 9px;
+    border:1px solid var(--line);border-radius:6px;background:#fdfcfa;color:var(--ink)}
+  textarea{resize:vertical;min-height:52px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:18px 20px;margin-bottom:16px}
+  section h2{font-size:18px;margin:0 0 3px}
+  section .why{color:var(--muted);font-size:13.5px;margin:0 0 14px;font-style:italic}
+  .tag{display:inline-block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--accent);border:1px solid var(--accent);border-radius:99px;padding:1px 7px;
+    margin-left:8px;vertical-align:2px;font-style:normal}
+  .item{display:flex;gap:10px;padding:9px 0;border-top:1px solid #f0ede8;align-items:flex-start}
+  .item:first-of-type{border-top:none}
+  .item input[type=checkbox]{margin-top:5px;width:17px;height:17px;accent-color:var(--accent);flex:0 0 auto;cursor:pointer}
+  .item label{cursor:pointer;font-size:15px}
+  .item .hint{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+  .redflag{border-left:3px solid var(--bad);padding-left:14px}
+  .redflag h2{color:var(--bad)}
+  .redflag input[type=checkbox]{accent-color:var(--bad)}
+  .notes{margin-top:12px}
+  footer{color:var(--muted);font-size:13px;margin-top:28px;line-height:1.7}
+  footer a{color:var(--accent)}
+  @media (max-width:620px){.grid{grid-template-columns:1fr}}
+  @media print{
+    .bar{position:static} button{display:none} body{background:#fff}
+    section{break-inside:avoid;border-color:#ccc}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Source Evaluation Checklist</h1>
+  <p class="sub">A reusable appraisal tool for any source &mdash; article, book, website, dataset, or AI output. Combines Cornell's appraisal criteria, CRAAP/RADAR, Caulfield's SIFT moves, and the ROBOT test for AI content.</p>
+
+  <div class="bar">
+    <span class="score" id="score">0 / 0</span>
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <span class="verdict" id="verdict">Not started</span>
+    <button onclick="window.print()">Print / Save PDF</button>
+    <button onclick="if(confirm('Clear all answers?'))reset()">Reset</button>
+  </div>
+
+  <div class="meta">
+    <div class="grid">
+      <div><label for="m1">Source title</label><input type="text" id="m1"></div>
+      <div><label for="m2">Author / creator</label><input type="text" id="m2"></div>
+      <div><label for="m3">Publisher / outlet / URL</label><input type="text" id="m3"></div>
+      <div><label for="m4">Date published &amp; last revised</label><input type="text" id="m4"></div>
+      <div><label for="m5">Source type</label><input type="text" id="m5" placeholder="peer-reviewed / news / preprint / blog / AI output / dataset"></div>
+      <div><label for="m6">What I need it for</label><input type="text" id="m6" placeholder="the specific claim or question"></div>
+    </div>
+  </div>
+
+  <!-- 0. STOP -->
+  <section>
+    <h2>0. Stop<span class="tag">SIFT</span></h2>
+    <p class="why">Before reading closely: check your own reaction and decide how much scrutiny this deserves.</p>
+    <div class="item"><input type="checkbox"><label>I noticed my emotional reaction to the headline or framing<span class="hint">Strong outrage, vindication, or excitement is a signal to slow down &mdash; that reaction is often engineered.</span></label></div>
+    <div class="item"><input type="checkbox"><label>I know what this source needs to support<span class="hint">Effort should scale to the stakes. A passing detail needs less than a load-bearing claim.</span></label></div>
+    <div class="item"><input type="checkbox"><label>I can identify what the source actually is<span class="hint">Peer-reviewed study, preprint, press release, opinion piece, marketing, and AI summary all warrant different trust.</span></label></div>
+  </section>
+
+  <!-- 1. Authority -->
+  <section>
+    <h2>1. Author &amp; Authority<span class="tag">Cornell &middot; CRAAP</span></h2>
+    <p class="why">Who is speaking, and what earns them a hearing on this topic specifically?</p>
+    <div class="item"><input type="checkbox"><label>The author is named and identifiable<span class="hint">Anonymous or "staff" attribution isn't disqualifying, but it removes a check.</span></label></div>
+    <div class="item"><input type="checkbox"><label>Their credentials and institutional affiliation are relevant to <em>this</em> topic<span class="hint">Expertise doesn't transfer across fields. A cardiologist on monetary policy is a layperson.</span></label></div>
+    <div class="item"><input type="checkbox"><label>I looked the author up <em>away from</em> this page<span class="hint">Lateral reading: search their name, read what others say about them. Don't rely on the bio they wrote themselves.</span></label></div>
+    <div class="item"><input type="checkbox"><label>They are cited by others working in the field<span class="hint">Recurring names across independent bibliographies signal standing.</span></label></div>
+    <div class="item"><input type="checkbox"><label>The publisher/host is reputable and I know its goals<span class="hint">University press, established journal, or agency vs. advocacy group, content farm, or SEO site.</span></label></div>
+  </section>
+
+  <!-- 2. Reason for writing -->
+  <section>
+    <h2>2. Purpose &amp; Reason for Writing<span class="tag">RADAR &middot; CRAAP</span></h2>
+    <p class="why">Every source is made for a reason. Knowing the reason predicts the distortions.</p>
+    <div class="item"><input type="checkbox"><label>I can state the purpose: inform, persuade, sell, entertain, or advocate</label></div>
+    <div class="item"><input type="checkbox"><label>Funding, sponsorship, and conflicts of interest are disclosed<span class="hint">Check the acknowledgements and disclosure statement, not just the abstract.</span></label></div>
+    <div class="item"><input type="checkbox"><label>The intended audience matches my need<span class="hint">Too elementary, too technical, or aimed at a different discipline all limit usefulness.</span></label></div>
+    <div class="item"><input type="checkbox"><label>Language is measured rather than emotionally loaded<span class="hint">Loaded adjectives and enemy-framing are a tell.</span></label></div>
+    <div class="item"><input type="checkbox"><label>Opposing views are represented fairly, not strawmanned</label></div>
+  </section>
+
+  <!-- 3. Date -->
+  <section>
+    <h2>3. Currency<span class="tag">Cornell &middot; RADAR</span></h2>
+    <p class="why">"Current enough" depends entirely on the field.</p>
+    <div class="item"><input type="checkbox"><label>I found the publication date and the last-revision date<span class="hint">On webpages, check the footer; on books, the copyright page verso.</span></label></div>
+    <div class="item"><input type="checkbox"><label>The age is appropriate for this topic<span class="hint">Fast-moving science and policy demand recency; humanities and primary history often don't.</span></label></div>
+    <div class="item"><input type="checkbox"><label>This is the latest edition, or I know why an earlier one matters<span class="hint">Repeated editions suggest a work has become a standard reference.</span></label></div>
+    <div class="item"><input type="checkbox"><label>Nothing has superseded, corrected, or retracted it<span class="hint">Check for retraction notices, errata, and newer replications.</span></label></div>
+  </section>
+
+  <!-- 4. Evidence -->
+  <section>
+    <h2>4. Evidence &amp; Reasoning<span class="tag">Cornell &middot; CRAAP</span></h2>
+    <p class="why">The core test: can the claims be separated from the interpretation, and do they hold?</p>
+    <div class="item"><input type="checkbox"><label>I distinguished fact from opinion from speculation<span class="hint">Facts are verifiable. Skilled writers make interpretation read like fact.</span></label></div>
+    <div class="item"><input type="checkbox"><label>Claims are supported by cited evidence, not assertion<span class="hint">A real bibliography reflects care; its absence is informative.</span></label></div>
+    <div class="item"><input type="checkbox"><label>Methods are described well enough to assess or reproduce<span class="hint">Sample size, time frame, data source, and limitations should be stated.</span></label></div>
+    <div class="item"><input type="checkbox"><label>Stated numbers are internally consistent<span class="hint">Do percentages sum? Do figures in the text match the tables?</span></label></div>
+    <div class="item"><input type="checkbox"><label>Conclusions do not overreach the evidence<span class="hint">Watch correlation presented as cause, and small studies framed as settled.</span></label></div>
+    <div class="item"><input type="checkbox"><label>Limitations and counter-evidence are acknowledged</label></div>
+    <div class="item"><input type="checkbox"><label>If it departs sharply from consensus, the case is proportionally strong<span class="hint">The more radical the departure, the more scrutiny it earns &mdash; not automatic dismissal.</span></label></div>
+  </section>
+
+  <!-- 5. Coverage -->
+  <section>
+    <h2>5. Coverage &amp; Source Chain<span class="tag">Cornell &middot; SIFT</span></h2>
+    <p class="why">Where does this sit in the evidence chain, and does it survive comparison?</p>
+    <div class="item"><input type="checkbox"><label>I know whether this is primary or secondary<span class="hint">Primary = raw material (original study, dataset, document, testimony). Secondary = interpretation of it.</span></label></div>
+    <div class="item"><input type="checkbox"><label>I traced quotes, statistics, and images back to their origin<span class="hint">Follow the citation trail. Reporting-on-reporting drifts; check what the original actually said.</span></label></div>
+    <div class="item"><input type="checkbox"><label>I found independent coverage of the same claim<span class="hint">If the claim matters, set the source aside and look for better reporting on the claim itself.</span></label></div>
+    <div class="item"><input type="checkbox"><label>Independent sources broadly agree, or I know why they diverge</label></div>
+    <div class="item"><input type="checkbox"><label>Coverage of my specific question is substantive, not passing</label></div>
+    <div class="item"><input type="checkbox"><label>I checked reviews or critical responses to this work<span class="hint">Book reviews, post-publication comments, replication attempts, rebuttals.</span></label></div>
+  </section>
+
+  <!-- 6. Presentation -->
+  <section>
+    <h2>6. Craft &amp; Presentation<span class="tag">Cornell &middot; RADAR</span></h2>
+    <p class="why">Weak signals on their own, but sloppiness correlates with unreliability.</p>
+    <div class="item"><input type="checkbox"><label>Structure is logical and main points are clearly stated</label></div>
+    <div class="item"><input type="checkbox"><label>Free of significant typos, broken links, and formatting decay</label></div>
+    <div class="item"><input type="checkbox"><label>Charts are honest<span class="hint">Truncated axes, mismatched scales, and cherry-picked date ranges distort more than words do.</span></label></div>
+    <div class="item"><input type="checkbox"><label>Design polish isn't doing the work of substance<span class="hint">Professional appearance is cheap to buy and easy to fake.</span></label></div>
+  </section>
+
+  <!-- 7. AI -->
+  <section>
+    <h2>7. If AI Was Involved<span class="tag">ROBOT test</span></h2>
+    <p class="why">Skip if not applicable. Applies to AI-written text, AI summaries, and AI-assisted research.</p>
+    <div class="item"><input type="checkbox"><label>AI involvement is disclosed, or I can reasonably infer it</label></div>
+    <div class="item"><input type="checkbox"><label>Every cited source actually exists and says what's claimed<span class="hint">Fabricated citations and misattributed quotes are the characteristic failure. Verify each one.</span></label></div>
+    <div class="item"><input type="checkbox"><label>Factual claims were checked against a non-AI authority</label></div>
+    <div class="item"><input type="checkbox"><label>I know the model's knowledge cutoff and whether it searched</label></div>
+    <div class="item"><input type="checkbox"><label>A human with subject expertise reviewed the output</label></div>
+    <div class="item"><input type="checkbox"><label>I considered whose data trained it and what bias that carries</label></div>
+  </section>
+
+  <!-- Red flags -->
+  <section class="redflag">
+    <h2>Red Flags</h2>
+    <p class="why">Check any that apply. Even one warrants serious caution regardless of your score above.</p>
+    <div class="item"><input type="checkbox" data-flag><label>No author, date, or citations anywhere</label></div>
+    <div class="item"><input type="checkbox" data-flag><label>Claims trace back only to the source itself, or in a circle</label></div>
+    <div class="item"><input type="checkbox" data-flag><label>The one outlet making this claim is the only one making it</label></div>
+    <div class="item"><input type="checkbox" data-flag><label>Undisclosed financial or political stake in the conclusion</label></div>
+    <div class="item"><input type="checkbox" data-flag><label>Retracted, corrected, or widely disputed by qualified critics</label></div>
+    <div class="item"><input type="checkbox" data-flag><label>Statistics with no source, method, or denominator</label></div>
+    <div class="item"><input type="checkbox" data-flag><label>Predatory or pay-to-publish venue with no real peer review</label></div>
+    <div class="item"><input type="checkbox" data-flag><label>Images or quotes appear altered or stripped of context</label></div>
+  </section>
+
+  <section>
+    <h2>Verdict</h2>
+    <p class="why">Not a pass/fail. Decide how you'll use it and what still needs checking.</p>
+    <div class="item"><input type="checkbox"><label>I can state in one sentence how much weight this source can carry</label></div>
+    <div class="notes">
+      <label for="v1" style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px">How I'll use it &amp; what it can support</label>
+      <textarea id="v1"></textarea>
+    </div>
+    <div class="notes">
+      <label for="v2" style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px">Open questions / still to verify</label>
+      <textarea id="v2"></textarea>
+    </div>
+    <div class="notes">
+      <label for="v3" style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px">Corroborating or contradicting sources found</label>
+      <textarea id="v3"></textarea>
+    </div>
+  </section>
+
+  <footer>
+    <strong>How to use:</strong> Sections 0&ndash;6 apply to any source; section 7 only when AI is involved. Skip items that genuinely don't apply &mdash; the score is a prompt for thought, not a grade. A checklist tells you where to look; judgment still decides.<br><br>
+    Synthesized from Cornell University Library's <em>Critically Analyzing Information Sources</em>, the CRAAP and RADAR frameworks, Mike Caulfield's SIFT method, and McGill's ROBOT test for AI tools.
+  </footer>
+</div>
+
+<script>
+(function(){
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.item input[type=checkbox]'));
+  var quality = boxes.filter(function(b){ return !b.hasAttribute('data-flag'); });
+  var flags   = boxes.filter(function(b){ return b.hasAttribute('data-flag'); });
+  var scoreEl = document.getElementById('score');
+  var fillEl  = document.getElementById('fill');
+  var verdEl  = document.getElementById('verdict');
+
+  function update(){
+    var done = quality.filter(function(b){ return b.checked; }).length;
+    var total = quality.length;
+    var nflag = flags.filter(function(b){ return b.checked; }).length;
+    scoreEl.textContent = done + ' / ' + total + ' checked';
+    var pct = total ? (done/total*100) : 0;
+    fillEl.style.width = pct.toFixed(1) + '%';
+
+    var label, color;
+    if (nflag > 0){
+      label = nflag + ' red flag' + (nflag>1?'s':'') + ' — treat with caution';
+      color = 'var(--bad)';
+    } else if (done === 0){
+      label = 'Not started'; color = 'var(--muted)';
+    } else if (pct >= 80){
+      label = 'Holds up well'; color = 'var(--good)';
+    } else if (pct >= 55){
+      label = 'Usable with caveats'; color = 'var(--warn)';
+    } else {
+      label = 'Gaps remain — keep checking'; color = 'var(--bad)';
+    }
+    verdEl.textContent = label;
+    verdEl.style.color = color;
+    verdEl.style.borderColor = color;
+    fillEl.style.background = nflag > 0 ? 'var(--bad)' : 'var(--accent)';
+  }
+
+  boxes.forEach(function(b){ b.addEventListener('change', update); });
+
+  window.reset = function(){
+    boxes.forEach(function(b){ b.checked = false; });
+    Array.prototype.forEach.call(
+      document.querySelectorAll('input[type=text], textarea'),
+      function(f){ f.value = ''; }
+    );
+    update();
+    window.scrollTo(0,0);
+  };
+
+  update();
+})();
+</script>
+</body>
+</html>

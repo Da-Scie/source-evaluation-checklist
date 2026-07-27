@@ -36,6 +36,7 @@
     border:1px solid var(--line);border-radius:6px;background:#fdfcfa;color:var(--ink);
     resize:vertical;overflow:hidden;min-height:36px;display:block}
   textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;background:#fff}
+  textarea::placeholder{font-style:italic;color:#9a948c}
 
   section{background:var(--card);border:1px solid var(--line);border-radius:10px;
     padding:18px 20px;margin-bottom:16px}
@@ -57,7 +58,8 @@
   .notebtn.filled{opacity:1}
   .notebtn:hover{color:var(--accent);border-style:solid}
   .notebtn.filled{border-style:solid;border-color:var(--accent);color:var(--accent);background:#fdf8f3}
-  .itemnote{flex:1 0 100%;margin:2px 0 4px 27px;width:auto;font-size:13.5px;background:#faf8f5}
+  .itemnote{flex:0 0 calc(100% - 27px);width:calc(100% - 27px);
+    margin:2px 0 4px 27px;font-size:13.5px;background:#faf8f5}
 
   .secnote{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
   .notes{margin-top:12px}

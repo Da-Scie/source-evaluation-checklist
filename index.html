@@ -48,10 +48,13 @@
   .item{display:flex;flex-wrap:wrap;gap:10px;padding:9px 0;border-top:1px solid #f0ede8;align-items:flex-start}
   .item:first-of-type{border-top:none}
   .item input[type=checkbox]{margin-top:5px;width:17px;height:17px;accent-color:var(--accent);flex:0 0 auto;cursor:pointer}
-  .item > label{cursor:pointer;font-size:15px;flex:1 1 300px}
+  .item > label{cursor:pointer;font-size:15px;flex:0 1 auto;max-width:calc(100% - 100px)}
   .item .hint{display:block;color:var(--muted);font-size:13px;margin-top:2px}
-  .notebtn{flex:0 0 auto;font-size:11.5px;padding:2px 8px;border-radius:99px;
-    color:var(--muted);background:transparent;border:1px dashed var(--line);align-self:flex-start;margin-top:3px}
+  .notebtn{flex:0 0 auto;font-size:11.5px;padding:1px 8px;border-radius:99px;
+    color:var(--muted);background:transparent;border:1px dashed var(--line);
+    align-self:flex-start;margin-top:4px;opacity:.55;transition:opacity .15s}
+  .item:hover .notebtn,.notebtn:focus{opacity:1}
+  .notebtn.filled{opacity:1}
   .notebtn:hover{color:var(--accent);border-style:solid}
   .notebtn.filled{border-style:solid;border-color:var(--accent);color:var(--accent);background:#fdf8f3}
   .itemnote{flex:1 0 100%;margin:2px 0 4px 27px;width:auto;font-size:13.5px;background:#faf8f5}
@@ -80,7 +83,7 @@
 <div class="wrap">
 
   <h1>Source Evaluation Checklist</h1>
-  <p class="sub">A reusable appraisal tool for any source &mdash; article, book, website, dataset, or AI output. Combines Cornell's appraisal criteria, CRAAP/RADAR, Caulfield's SIFT moves, and the ROBOT test for AI content. Every field grows as you type; every item takes its own note.</p>
+  <p class="sub">For any source &mdash; article, book, website, dataset, or AI output. Every item takes its own note; every field grows as you type.</p>
 
   <div class="bar">
     <span class="score" id="score">0 / 0</span>
@@ -217,8 +220,8 @@
   </section>
 
   <footer>
-    <strong>How to use:</strong> Sections 0&ndash;6 apply to any source; section 7 only when AI is involved. Every checklist item has a <em>+ note</em> button for evidence, page numbers, links, or doubts, and every section has its own notes box &mdash; all of them grow as you type, and drag the bottom edge if you want more room still. Skip items that genuinely don't apply; the score is a prompt for thought, not a grade. Work is saved in this browser automatically, and printing includes every note you've written even if collapsed.<br><br>
-    Synthesized from Cornell University Library's <em>Critically Analyzing Information Sources</em>, the CRAAP and RADAR frameworks, Mike Caulfield's SIFT method, and McGill's ROBOT test for AI tools.
+    Sections 0&ndash;6 apply to any source; section 7 only when AI is involved. Skip what doesn't apply &mdash; the score is a prompt for thought, not a grade. Notes save automatically in this browser.<br><br>
+    Synthesized from Cornell, CRAAP, RADAR, SIFT, and the ROBOT test.
   </footer>
 </div>
 

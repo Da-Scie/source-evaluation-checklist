@@ -12,26 +12,31 @@
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
     font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Georgia,serif;}
-  .wrap{max-width:880px;margin:0 auto;padding:32px 20px 80px}
+  .wrap{max-width:900px;margin:0 auto;padding:32px 20px 90px}
   h1{font-size:28px;margin:0 0 6px}
   .sub{color:var(--muted);margin:0 0 24px;font-size:15px}
+
   .bar{position:sticky;top:0;z-index:20;background:var(--bg);
     border-bottom:1px solid var(--line);padding:12px 0;margin-bottom:20px;
-    display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-  .score{font-weight:700;font-size:15px}
-  .verdict{font-size:14px;padding:3px 10px;border-radius:99px;border:1px solid var(--line);background:var(--card)}
-  .track{flex:1;min-width:140px;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+    display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .score{font-weight:700;font-size:15px;white-space:nowrap}
+  .verdict{font-size:14px;padding:3px 10px;border-radius:99px;border:1px solid var(--line);background:var(--card);white-space:nowrap}
+  .track{flex:1;min-width:110px;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
   .fill{height:100%;width:0;background:var(--accent);transition:width .25s}
   button{font:inherit;font-size:14px;padding:6px 12px;border:1px solid var(--line);
     background:var(--card);border-radius:7px;cursor:pointer;color:var(--ink)}
   button:hover{border-color:var(--accent)}
+  .saved{font-size:12px;color:var(--muted);white-space:nowrap;min-width:96px}
+
   .meta{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:22px}
-  .meta label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;
+  .cap{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;
     color:var(--muted);margin-bottom:4px}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  input[type=text],textarea{width:100%;font:inherit;font-size:14px;padding:7px 9px;
-    border:1px solid var(--line);border-radius:6px;background:#fdfcfa;color:var(--ink)}
-  textarea{resize:vertical;min-height:52px}
+  textarea{width:100%;font:inherit;font-size:14px;padding:7px 9px;
+    border:1px solid var(--line);border-radius:6px;background:#fdfcfa;color:var(--ink);
+    resize:vertical;overflow:hidden;min-height:36px;display:block}
+  textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;background:#fff}
+
   section{background:var(--card);border:1px solid var(--line);border-radius:10px;
     padding:18px 20px;margin-bottom:16px}
   section h2{font-size:18px;margin:0 0 3px}
@@ -39,21 +44,35 @@
   .tag{display:inline-block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;
     color:var(--accent);border:1px solid var(--accent);border-radius:99px;padding:1px 7px;
     margin-left:8px;vertical-align:2px;font-style:normal}
-  .item{display:flex;gap:10px;padding:9px 0;border-top:1px solid #f0ede8;align-items:flex-start}
+
+  .item{display:flex;flex-wrap:wrap;gap:10px;padding:9px 0;border-top:1px solid #f0ede8;align-items:flex-start}
   .item:first-of-type{border-top:none}
   .item input[type=checkbox]{margin-top:5px;width:17px;height:17px;accent-color:var(--accent);flex:0 0 auto;cursor:pointer}
-  .item label{cursor:pointer;font-size:15px}
+  .item > label{cursor:pointer;font-size:15px;flex:1 1 300px}
   .item .hint{display:block;color:var(--muted);font-size:13px;margin-top:2px}
-  .redflag{border-left:3px solid var(--bad);padding-left:14px}
+  .notebtn{flex:0 0 auto;font-size:11.5px;padding:2px 8px;border-radius:99px;
+    color:var(--muted);background:transparent;border:1px dashed var(--line);align-self:flex-start;margin-top:3px}
+  .notebtn:hover{color:var(--accent);border-style:solid}
+  .notebtn.filled{border-style:solid;border-color:var(--accent);color:var(--accent);background:#fdf8f3}
+  .itemnote{flex:1 0 100%;margin:2px 0 4px 27px;width:auto;font-size:13.5px;background:#faf8f5}
+
+  .secnote{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+  .notes{margin-top:12px}
+
+  .redflag{border-left:3px solid var(--bad)}
   .redflag h2{color:var(--bad)}
   .redflag input[type=checkbox]{accent-color:var(--bad)}
-  .notes{margin-top:12px}
+
   footer{color:var(--muted);font-size:13px;margin-top:28px;line-height:1.7}
   footer a{color:var(--accent)}
   @media (max-width:620px){.grid{grid-template-columns:1fr}}
   @media print{
-    .bar{position:static} button{display:none} body{background:#fff}
+    .bar{display:none} button{display:none} body{background:#fff}
     section{break-inside:avoid;border-color:#ccc}
+    textarea{border:none;border-bottom:1px dotted #aaa;border-radius:0;background:#fff;
+      padding-left:0;height:auto!important;overflow:visible;resize:none;min-height:0}
+    .itemnote{margin-left:27px}
+    .empty-print{display:none!important}
   }
 </style>
 </head>
@@ -61,28 +80,30 @@
 <div class="wrap">
 
   <h1>Source Evaluation Checklist</h1>
-  <p class="sub">A reusable appraisal tool for any source &mdash; article, book, website, dataset, or AI output. Combines Cornell's appraisal criteria, CRAAP/RADAR, Caulfield's SIFT moves, and the ROBOT test for AI content.</p>
+  <p class="sub">A reusable appraisal tool for any source &mdash; article, book, website, dataset, or AI output. Combines Cornell's appraisal criteria, CRAAP/RADAR, Caulfield's SIFT moves, and the ROBOT test for AI content. Every field grows as you type; every item takes its own note.</p>
 
   <div class="bar">
     <span class="score" id="score">0 / 0</span>
     <div class="track"><div class="fill" id="fill"></div></div>
     <span class="verdict" id="verdict">Not started</span>
-    <button onclick="window.print()">Print / Save PDF</button>
-    <button onclick="if(confirm('Clear all answers?'))reset()">Reset</button>
+    <button id="expand" type="button">Expand all notes</button>
+    <button onclick="window.print()" type="button">Print / PDF</button>
+    <button onclick="if(confirm('Clear all answers and notes?'))reset()" type="button">Reset</button>
+    <span class="saved" id="saved"></span>
   </div>
 
   <div class="meta">
     <div class="grid">
-      <div><label for="m1">Source title</label><input type="text" id="m1"></div>
-      <div><label for="m2">Author / creator</label><input type="text" id="m2"></div>
-      <div><label for="m3">Publisher / outlet / URL</label><input type="text" id="m3"></div>
-      <div><label for="m4">Date published &amp; last revised</label><input type="text" id="m4"></div>
-      <div><label for="m5">Source type</label><input type="text" id="m5" placeholder="peer-reviewed / news / preprint / blog / AI output / dataset"></div>
-      <div><label for="m6">What I need it for</label><input type="text" id="m6" placeholder="the specific claim or question"></div>
+      <div><span class="cap">Source title</span><textarea rows="1" data-k="m1"></textarea></div>
+      <div><span class="cap">Author / creator</span><textarea rows="1" data-k="m2"></textarea></div>
+      <div><span class="cap">Publisher / outlet / URL</span><textarea rows="1" data-k="m3"></textarea></div>
+      <div><span class="cap">Date published &amp; last revised</span><textarea rows="1" data-k="m4"></textarea></div>
+      <div><span class="cap">Source type</span><textarea rows="1" data-k="m5" placeholder="peer-reviewed / news / preprint / blog / AI output / dataset"></textarea></div>
+      <div><span class="cap">What I need it for</span><textarea rows="1" data-k="m6" placeholder="the specific claim or question"></textarea></div>
     </div>
   </div>
 
-  <!-- 0. STOP -->
+  <!-- 0 -->
   <section>
     <h2>0. Stop<span class="tag">SIFT</span></h2>
     <p class="why">Before reading closely: check your own reaction and decide how much scrutiny this deserves.</p>
@@ -91,7 +112,7 @@
     <div class="item"><input type="checkbox"><label>I can identify what the source actually is<span class="hint">Peer-reviewed study, preprint, press release, opinion piece, marketing, and AI summary all warrant different trust.</span></label></div>
   </section>
 
-  <!-- 1. Authority -->
+  <!-- 1 -->
   <section>
     <h2>1. Author &amp; Authority<span class="tag">Cornell &middot; CRAAP</span></h2>
     <p class="why">Who is speaking, and what earns them a hearing on this topic specifically?</p>
@@ -102,7 +123,7 @@
     <div class="item"><input type="checkbox"><label>The publisher/host is reputable and I know its goals<span class="hint">University press, established journal, or agency vs. advocacy group, content farm, or SEO site.</span></label></div>
   </section>
 
-  <!-- 2. Reason for writing -->
+  <!-- 2 -->
   <section>
     <h2>2. Purpose &amp; Reason for Writing<span class="tag">RADAR &middot; CRAAP</span></h2>
     <p class="why">Every source is made for a reason. Knowing the reason predicts the distortions.</p>
@@ -113,7 +134,7 @@
     <div class="item"><input type="checkbox"><label>Opposing views are represented fairly, not strawmanned</label></div>
   </section>
 
-  <!-- 3. Date -->
+  <!-- 3 -->
   <section>
     <h2>3. Currency<span class="tag">Cornell &middot; RADAR</span></h2>
     <p class="why">"Current enough" depends entirely on the field.</p>
@@ -123,7 +144,7 @@
     <div class="item"><input type="checkbox"><label>Nothing has superseded, corrected, or retracted it<span class="hint">Check for retraction notices, errata, and newer replications.</span></label></div>
   </section>
 
-  <!-- 4. Evidence -->
+  <!-- 4 -->
   <section>
     <h2>4. Evidence &amp; Reasoning<span class="tag">Cornell &middot; CRAAP</span></h2>
     <p class="why">The core test: can the claims be separated from the interpretation, and do they hold?</p>
@@ -136,7 +157,7 @@
     <div class="item"><input type="checkbox"><label>If it departs sharply from consensus, the case is proportionally strong<span class="hint">The more radical the departure, the more scrutiny it earns &mdash; not automatic dismissal.</span></label></div>
   </section>
 
-  <!-- 5. Coverage -->
+  <!-- 5 -->
   <section>
     <h2>5. Coverage &amp; Source Chain<span class="tag">Cornell &middot; SIFT</span></h2>
     <p class="why">Where does this sit in the evidence chain, and does it survive comparison?</p>
@@ -148,7 +169,7 @@
     <div class="item"><input type="checkbox"><label>I checked reviews or critical responses to this work<span class="hint">Book reviews, post-publication comments, replication attempts, rebuttals.</span></label></div>
   </section>
 
-  <!-- 6. Presentation -->
+  <!-- 6 -->
   <section>
     <h2>6. Craft &amp; Presentation<span class="tag">Cornell &middot; RADAR</span></h2>
     <p class="why">Weak signals on their own, but sloppiness correlates with unreliability.</p>
@@ -158,7 +179,7 @@
     <div class="item"><input type="checkbox"><label>Design polish isn't doing the work of substance<span class="hint">Professional appearance is cheap to buy and easy to fake.</span></label></div>
   </section>
 
-  <!-- 7. AI -->
+  <!-- 7 -->
   <section>
     <h2>7. If AI Was Involved<span class="tag">ROBOT test</span></h2>
     <p class="why">Skip if not applicable. Applies to AI-written text, AI summaries, and AI-assisted research.</p>
@@ -184,39 +205,81 @@
     <div class="item"><input type="checkbox" data-flag><label>Images or quotes appear altered or stripped of context</label></div>
   </section>
 
-  <section>
+  <section id="verdictsec">
     <h2>Verdict</h2>
     <p class="why">Not a pass/fail. Decide how you'll use it and what still needs checking.</p>
     <div class="item"><input type="checkbox"><label>I can state in one sentence how much weight this source can carry</label></div>
-    <div class="notes">
-      <label for="v1" style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px">How I'll use it &amp; what it can support</label>
-      <textarea id="v1"></textarea>
-    </div>
-    <div class="notes">
-      <label for="v2" style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px">Open questions / still to verify</label>
-      <textarea id="v2"></textarea>
-    </div>
-    <div class="notes">
-      <label for="v3" style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px">Corroborating or contradicting sources found</label>
-      <textarea id="v3"></textarea>
-    </div>
+    <div class="notes"><span class="cap">How I'll use it &amp; what it can support</span><textarea rows="3" data-k="v1"></textarea></div>
+    <div class="notes"><span class="cap">Open questions / still to verify</span><textarea rows="3" data-k="v2"></textarea></div>
+    <div class="notes"><span class="cap">Corroborating or contradicting sources found</span><textarea rows="3" data-k="v3"></textarea></div>
+    <div class="notes"><span class="cap">Quotes &amp; passages worth keeping (with page / paragraph)</span><textarea rows="4" data-k="v4"></textarea></div>
+    <div class="notes"><span class="cap">Anything else</span><textarea rows="3" data-k="v5"></textarea></div>
   </section>
 
   <footer>
-    <strong>How to use:</strong> Sections 0&ndash;6 apply to any source; section 7 only when AI is involved. Skip items that genuinely don't apply &mdash; the score is a prompt for thought, not a grade. A checklist tells you where to look; judgment still decides.<br><br>
+    <strong>How to use:</strong> Sections 0&ndash;6 apply to any source; section 7 only when AI is involved. Every checklist item has a <em>+ note</em> button for evidence, page numbers, links, or doubts, and every section has its own notes box &mdash; all of them grow as you type, and drag the bottom edge if you want more room still. Skip items that genuinely don't apply; the score is a prompt for thought, not a grade. Work is saved in this browser automatically, and printing includes every note you've written even if collapsed.<br><br>
     Synthesized from Cornell University Library's <em>Critically Analyzing Information Sources</em>, the CRAAP and RADAR frameworks, Mike Caulfield's SIFT method, and McGill's ROBOT test for AI tools.
   </footer>
 </div>
 
 <script>
 (function(){
-  var boxes = Array.prototype.slice.call(document.querySelectorAll('.item input[type=checkbox]'));
+  var KEY = 'source-eval-checklist-v2';
+
+  /* ---------- grow ---------- */
+  function grow(t){ t.style.height='auto'; t.style.height=(t.scrollHeight+2)+'px'; }
+  function growAll(){ document.querySelectorAll('textarea').forEach(grow); }
+
+  /* ---------- build per-item notes + per-section notes ---------- */
+  var items = Array.prototype.slice.call(document.querySelectorAll('.item'));
+  items.forEach(function(item, i){
+    var btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'notebtn'; btn.textContent = '+ note';
+    btn.title = 'Add a note for this item';
+
+    var ta = document.createElement('textarea');
+    ta.className = 'itemnote'; ta.rows = 2; ta.hidden = true;
+    ta.placeholder = 'Evidence, page or paragraph, links, doubts…';
+    ta.setAttribute('data-k', 'n' + i);
+
+    btn.addEventListener('click', function(){
+      ta.hidden = !ta.hidden;
+      if(!ta.hidden){ grow(ta); ta.focus(); }
+      btn.textContent = ta.hidden ? (ta.value.trim() ? 'note ●' : '+ note') : '− note';
+    });
+    ta.addEventListener('input', function(){
+      btn.classList.toggle('filled', ta.value.trim() !== '');
+    });
+
+    item.appendChild(btn);
+    item.appendChild(ta);
+  });
+
+  document.querySelectorAll('section').forEach(function(sec, s){
+    if(sec.id === 'verdictsec') return;
+    var wrap = document.createElement('div');
+    wrap.className = 'secnote';
+    var cap = document.createElement('span');
+    cap.className = 'cap';
+    cap.textContent = 'Notes for this section';
+    var ta = document.createElement('textarea');
+    ta.rows = 2;
+    ta.placeholder = 'What you found, what you couldn’t confirm, where to look next…';
+    ta.setAttribute('data-k', 's' + s);
+    wrap.appendChild(cap); wrap.appendChild(ta); sec.appendChild(wrap);
+  });
+
+  var fields = Array.prototype.slice.call(document.querySelectorAll('textarea'));
+  var boxes  = Array.prototype.slice.call(document.querySelectorAll('.item input[type=checkbox]'));
   var quality = boxes.filter(function(b){ return !b.hasAttribute('data-flag'); });
   var flags   = boxes.filter(function(b){ return b.hasAttribute('data-flag'); });
+
   var scoreEl = document.getElementById('score');
   var fillEl  = document.getElementById('fill');
   var verdEl  = document.getElementById('verdict');
+  var savedEl = document.getElementById('saved');
 
+  /* ---------- scoring ---------- */
   function update(){
     var done = quality.filter(function(b){ return b.checked; }).length;
     var total = quality.length;
@@ -226,37 +289,117 @@
     fillEl.style.width = pct.toFixed(1) + '%';
 
     var label, color;
-    if (nflag > 0){
-      label = nflag + ' red flag' + (nflag>1?'s':'') + ' — treat with caution';
-      color = 'var(--bad)';
-    } else if (done === 0){
-      label = 'Not started'; color = 'var(--muted)';
-    } else if (pct >= 80){
-      label = 'Holds up well'; color = 'var(--good)';
-    } else if (pct >= 55){
-      label = 'Usable with caveats'; color = 'var(--warn)';
-    } else {
-      label = 'Gaps remain — keep checking'; color = 'var(--bad)';
-    }
+    if (nflag > 0){ label = nflag + ' red flag' + (nflag>1?'s':'') + ' — treat with caution'; color = 'var(--bad)'; }
+    else if (done === 0){ label = 'Not started'; color = 'var(--muted)'; }
+    else if (pct >= 80){ label = 'Holds up well'; color = 'var(--good)'; }
+    else if (pct >= 55){ label = 'Usable with caveats'; color = 'var(--warn)'; }
+    else { label = 'Gaps remain — keep checking'; color = 'var(--bad)'; }
     verdEl.textContent = label;
     verdEl.style.color = color;
     verdEl.style.borderColor = color;
     fillEl.style.background = nflag > 0 ? 'var(--bad)' : 'var(--accent)';
   }
 
-  boxes.forEach(function(b){ b.addEventListener('change', update); });
+  /* ---------- persistence (degrades silently if unavailable) ---------- */
+  var timer;
+  function save(){
+    clearTimeout(timer);
+    timer = setTimeout(function(){
+      try {
+        var data = { c: boxes.map(function(b){ return b.checked ? 1 : 0; }), t: {} };
+        fields.forEach(function(f){ if(f.value) data.t[f.getAttribute('data-k')] = f.value; });
+        localStorage.setItem(KEY, JSON.stringify(data));
+        savedEl.textContent = 'Draft saved';
+        setTimeout(function(){ savedEl.textContent = ''; }, 1600);
+      } catch(e){ /* private mode or sandboxed: session-only */ }
+    }, 400);
+  }
+
+  function load(){
+    var raw;
+    try { raw = localStorage.getItem(KEY); } catch(e){ return; }
+    if(!raw) return;
+    var data;
+    try { data = JSON.parse(raw); } catch(e){ return; }
+    if(data.c) data.c.forEach(function(v,i){ if(boxes[i]) boxes[i].checked = !!v; });
+    if(data.t) fields.forEach(function(f){
+      var v = data.t[f.getAttribute('data-k')];
+      if(v){
+        f.value = v;
+        if(f.classList.contains('itemnote')){
+          var btn = f.previousElementSibling;
+          if(btn && btn.classList.contains('notebtn')){
+            btn.classList.add('filled');
+            btn.textContent = 'note ●';
+          }
+        }
+      }
+    });
+  }
+
+  /* ---------- wiring ---------- */
+  boxes.forEach(function(b){ b.addEventListener('change', function(){ update(); save(); }); });
+  document.addEventListener('input', function(e){
+    if(e.target.tagName === 'TEXTAREA'){ grow(e.target); save(); }
+  });
+
+  var expanded = false;
+  document.getElementById('expand').addEventListener('click', function(){
+    expanded = !expanded;
+    document.querySelectorAll('.itemnote').forEach(function(ta){
+      ta.hidden = !expanded;
+      if(expanded) grow(ta);
+      var btn = ta.previousElementSibling;
+      if(btn && btn.classList.contains('notebtn')){
+        btn.textContent = expanded ? '− note' : (ta.value.trim() ? 'note ●' : '+ note');
+      }
+    });
+    this.textContent = expanded ? 'Collapse all notes' : 'Expand all notes';
+  });
 
   window.reset = function(){
     boxes.forEach(function(b){ b.checked = false; });
-    Array.prototype.forEach.call(
-      document.querySelectorAll('input[type=text], textarea'),
-      function(f){ f.value = ''; }
-    );
-    update();
+    fields.forEach(function(f){ f.value = ''; f.style.height = ''; });
+    document.querySelectorAll('.notebtn').forEach(function(b){
+      b.classList.remove('filled'); b.textContent = '+ note';
+    });
+    document.querySelectorAll('.itemnote').forEach(function(t){ t.hidden = true; });
+    expanded = false;
+    document.getElementById('expand').textContent = 'Expand all notes';
+    try { localStorage.removeItem(KEY); } catch(e){}
+    update(); growAll();
     window.scrollTo(0,0);
   };
 
-  update();
+  /* ---------- printing: reveal filled notes, hide empty fields ---------- */
+  function beforePrint(){
+    document.querySelectorAll('.itemnote').forEach(function(ta){
+      if(ta.value.trim()){ ta.hidden = false; grow(ta); }
+      else { ta.hidden = true; }
+    });
+    fields.forEach(function(f){
+      if(!f.value.trim() && !f.classList.contains('itemnote')){
+        f.parentElement.classList.add('empty-print');
+      } else {
+        f.parentElement.classList.remove('empty-print');
+        grow(f);
+      }
+    });
+  }
+  function afterPrint(){
+    document.querySelectorAll('.empty-print').forEach(function(el){ el.classList.remove('empty-print'); });
+    if(!expanded){
+      document.querySelectorAll('.itemnote').forEach(function(ta){ ta.hidden = true; });
+    }
+  }
+  window.addEventListener('beforeprint', beforePrint);
+  window.addEventListener('afterprint', afterPrint);
+  if(window.matchMedia){
+    var mq = window.matchMedia('print');
+    if(mq.addEventListener) mq.addEventListener('change', function(m){ m.matches ? beforePrint() : afterPrint(); });
+  }
+
+  load(); update(); growAll();
 })();
 </script>
 </body>

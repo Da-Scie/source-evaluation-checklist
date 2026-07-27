@@ -2,7 +2,7 @@
 
 A reusable, single-file checklist for critically appraising any information source — journal article, book, news story, website, dataset, or AI output.
 
-**[Open the checklist →](https://BRIAN_USER.github.io/source-evaluation-checklist/)**
+**[Open the checklist →](https://Da-Scie.github.io/source-evaluation-checklist/)**
 
 ## What it does
 
@@ -44,7 +44,7 @@ Synthesised from:
 Open `index.html` in any browser, or use the hosted link above. To run locally:
 
 ```bash
-git clone https://github.com/BRIAN_USER/source-evaluation-checklist.git
+git clone https://github.com/Da-Scie/source-evaluation-checklist.git
 cd source-evaluation-checklist
 start index.html   # macOS: open index.html
 ```
